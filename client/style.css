@@ -1,0 +1,104 @@
+body {
+    background-color: #F2F2F2;
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: #597322;
+    font-size: 5em;
+    margin: 0px 10px 10px 10px;
+}
+
+h2 {
+    font-family: 'Playfair Display', serif;
+    color: #597322;
+    font-size: 2em;
+    text-align: center;
+}
+
+p {
+    color: #798C65;
+    font-family: 'DM Serif Text', serif;
+    text-align: center;
+}
+
+footer {
+    background-color: #DADADA;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+label {
+    color: #597322;
+    font-family: 'DM Serif Text', serif;
+    font-size: 20px;
+
+    margin: 10px 5px 10px 5px;
+}
+
+strong {
+    color: #354024;
+}
+
+#help {
+    border-radius: 10px;
+    width: 35px;
+    height: 35px;
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+
+    margin: 10px 5px 10px 5px;
+    color: #F2F2F2;
+    border: 2px solid #F2F2F2;
+
+    transition: all .5s;
+}
+
+#help:hover {
+    background-color: #798C65;
+    color: #F2F2F2;
+    border-color: #798C65;
+}
+
+#waterInfo {
+    font-size: 1.5em; 
+}
+
+#foot {
+    font-family: 'DM Serif Text', serif;
+    text-align: center;
+    color: #597322;
+    margin: 10px 10px 10px 10px;
+}
+
+#mainArea {
+    margin: 20px 10px 10px 10px;
+}
+
+#infoArea {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 20px 20px 20px 20px;
+    background-color: rgba(169, 191, 153, 0.8);
+    border-radius: 15px;
+}
+
+#search, #addUser {
+    font-family: 'DM Serif Text', serif;
+    color: #F2F2F2;
+    background-color: #798C65;
+}
+
+#addUser {
+    margin-top: 10px;
+}
+
+#searchArea {
+    padding: 10px 0px 25px 0px;
+    margin-bottom: 25px;
+    border-bottom: 3px inset #798C65;
+}
+

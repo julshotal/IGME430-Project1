@@ -6,16 +6,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-       <!-- Bootstrap -->
+       <!-- Bootstrap and jQuery -->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
        <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
 
        <!--stylesheet and webfonts-->
        <link rel="stylesheet" type="text/css" href="style.css">
+       <link href="https://fonts.googleapis.com/css?family=Playfair+Display&display=swap" rel="stylesheet">
+       <link href="https://fonts.googleapis.com/css?family=PT+Serif&display=swap" rel="stylesheet">
+       <link href="https://fonts.googleapis.com/css?family=DM+Serif+Text&display=swap" rel="stylesheet">
 
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>plantBar</title>
 </head>
 <body>
-    
+    <div class="container-fluid">
+        <div class="row" id="mainArea">  
+          <div class="col-sm" id="pic">
+            <header class="row">
+                <h1>plantBar.</h1>
+            </header>
+            
+            <p>plant pic</p>
+            <p id="waterInfo">Plant will need water in <strong>6</strong> days</p>
+          </div>
+
+          <div class="col-sm" id="infoArea">
+            <h2>yourPlants</h2>
+            <p>Enter your infomation or search an already made account</p>
+
+            <div id="searchArea" class="input-group">
+                <input type="text" class="form-control" placeholder="Enter name" id="searchBar">
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="search">search</button>
+                </div>
+            </div>
+
+            <div id="content">
+                <form id="newUser">
+                    <div class="form-group">
+                        <label for="newUser">Name</label>
+                        <input type="text" class="form-control" id="userName" placeholder="your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newUser">Plant Name</label>
+                        <input type="text" class="form-control" id="plantName" placeholder="plant name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newUser">Plant Type</label> 
+                        <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" id="help" data-target="#plantTypes">
+                               ?
+                        </button>  
+                        
+                        <div class="modal fade" id="plantTypes" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Plant Types</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    ...
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <select class="form-control" id="plantType">
+                            <option>Low Light</option>
+                            <option>Indirect Light</option>
+                            <option>Direct Light</option>
+                            <option>Desert</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary float-right" id="addUser">Add User</button>
+                </form>
+            </div>
+
+          </div>
+
+        </div>
+
+        <footer class="row justify-content-center" >
+            <p id="foot">Julia Hotaling © 2019</p>
+        </footer>
+
+      </div>
 </body>
 </html>
