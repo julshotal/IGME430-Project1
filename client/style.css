@@ -102,10 +102,18 @@ strong {
     border-radius: 15px;
 }
 
-#search, #addUser {
+#search, #addUser, #addPlant {
     font-family: 'DM Serif Text', serif;
     color: #F2F2F2;
     background-color: #798C65;
+}
+
+#addPlant {
+    visibility: hidden;
+}
+
+#plantList {
+    border: none;
 }
 
 #addUser {

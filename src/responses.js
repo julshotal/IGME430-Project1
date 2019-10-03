@@ -20,13 +20,23 @@ const respondEmpty = (request, response, status) => {
 };
 
 // GET USER
-const getUser = (request, response) => {
+const getUser = (request, response, params) => {
+  if (users[String(params.findUser)]) {
+    const key = String(params.findUser);
+    const user = users[key];
+
+    const responseJSON = {
+      user,
+    };
+
+    return respond(request, response, 200, responseJSON);
+  }
   const responseJSON = {
-    users,
+    message: '404 Error',
+    id: 'doesNotExist',
   };
 
-  console.log('get')
-  return respond(request, response, 200, responseJSON);
+  return respond(request, response, 404, responseJSON);
 };
 
 // NOT FOUND
@@ -71,6 +81,19 @@ const addUser = (request, response, body) => {
 
   return respondEmpty(request, response, responseCode);
 };
+
+// const addPlant = (request, response, body) => {
+//   const responseJSON = {
+//     message: 'Please enter the required information',
+//   };
+
+//   if (!body.newPlantName || !body.newPlantType) {
+//     responseJSON.id = 'missingParameters';
+//     return respond(request, response, 400, responseJSON);
+//   }
+
+//   //add new plants to user name currently in use
+// };
 
 module.exports = {
   getUser,

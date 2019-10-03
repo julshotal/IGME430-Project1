@@ -22,40 +22,88 @@
     <script type="text/babel">
     const handleResponse = (xhr, parseResponse) => {
         const content = document.querySelector('#content');
+        const alertArea = document.querySelector('#alertArea');
   
-        // switch(xhr.status) {
-        //   case 400: 
-        //     content.innerHTML = `<b>Bad Request</b>`;
-        //     break;
-        //   case 404:
-        //     content.innerHTML = `<b>Resource Not Found</b>`;
-        //     break;
-        //   default: 
-        //     content.innerHTML = `Error code not implemented by client.`;
-        //     break;
-        // }
+        switch(xhr.status) {
+          case 200:
+            console.log('User retrieved successfully');
+            break;
+          case 201:
+            if(alertArea.hasChildNodes()){
+                alertArea.removeChild(alertArea.childNodes[0]);
+                alertArea.appendChild(createAlert('User Created', 'success'));
+            } else {
+                alertArea.appendChild(createAlert('User Created', 'success'));
+            }
+            break;
+          case 204:
+            if(alertArea.hasChildNodes()){
+                alertArea.removeChild(alertArea.childNodes[0]);
+                alertArea.appendChild(createAlert('User Updated', 'success'));
+            } else {
+                alertArea.appendChild(createAlert('User Updated', 'success'));
+            }
+            break;
+          case 400: 
+            if(alertArea.hasChildNodes()){
+                alertArea.removeChild(alertArea.childNodes[0]);
+                alertArea.appendChild(createAlert('Please enter the required information', 'danger'));
+            } else {
+                alertArea.appendChild(createAlert('Please enter the required information', 'danger'));
+            }
+            break;
+          case 404:
+            if(alertArea.hasChildNodes()){
+                alertArea.removeChild(alertArea.childNodes[0]);
+                alertArea.appendChild(createAlert('404 Error - Not Found', 'danger'));
+            } else {
+                alertArea.appendChild(createAlert('404 Error - Not Found', 'danger'));
+            }
+            break;
+          default: 
+            if(alertArea.hasChildNodes()){
+                alertArea.removeChild(alertArea.childNodes[0]);
+                alertArea.appendChild(createAlert('Error - Not Implemented', 'danger'));
+            } else {
+                alertArea.appendChild(createAlert('Error - Not Implemented', 'danger'));
+            }
+            break;
+        }
         
         if(parseResponse) {
           const obj = JSON.parse(xhr.response);
-          console.dir(obj);
-  
-          if(obj.message) {
-            const p = document.createElement('p');
-            p.textContent = `Message: ${obj.message}`;
-            content.appendChild(p);
+          console.dir(obj.status);
+
+          if(obj.message !== undefined) {
+            console.dir(obj.message);
           }
           
-          if(obj.users) {
+          if(obj.user) {
+            console.dir(obj);
+
+            if(content.hasChildNodes()){
+                content.innerHTML = '';
+            }
+
+            const person = document.createElement('div');
             const name = document.createElement('h3');
+            const plants = document.createElement('ul');
+            const plant = document.createElement('li');
+            const newPlant = document.createElement('button');
 
-            const userString = JSON.stringify(obj.users.userName);
-            const plantString = JSON.stringify(obj.users.plantName);
-            const typeString = JSON.stringify(obj.users.plantType);
+            document.querySelector('#addPlant').style.visibility = "visible"
 
-            name.textContent = userString;
+            name.id = 'usersName';
+            name.innerHTML = obj.user.userName;
 
+            plants.id = 'plantList';
+            plant.innerHTML = `${obj.user.plantName} : ${obj.user.plantType}`;
 
-            content.appendChild(name);
+            plants.appendChild(plant);
+            person.appendChild(name);
+            person.appendChild(plants);
+
+            content.appendChild(person);
           } 
         }
       };
@@ -63,9 +111,10 @@
       const requestUpdate = (e, userForm) => {
         const url = userForm.action;
         const method = userForm.method;
+        const search = document.querySelector('#searchBar').value;
         
         const xhr = new XMLHttpRequest();
-        xhr.open(method, url);
+        xhr.open(method, url + search);
         xhr.setRequestHeader('Accept', 'application/json');
         if(method === 'get') {
           xhr.onload = () => handleResponse(xhr, true);
@@ -89,7 +138,7 @@
     
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader ('Accept', 'application/json');
-        xhr.onload = () => handleResponse(xhr, true);
+        xhr.onload = () => handleResponse(xhr, false);
         
         const formData = `userName=${nameField.value}&plantName=${plantField.value}&plantType=${plantTypeField.value}`;
         
@@ -110,6 +159,14 @@
         newUser.addEventListener('submit', addUser);
   
       };
+
+      const createAlert = (message, type) => {
+        let alert = document.createElement('div');
+        alert.className = `alert alert-${type} float-left`;
+        alert.role = 'alert';
+        alert.innerHTML = message
+        return alert;
+      }
   
       window.onload = init;
   
@@ -131,7 +188,7 @@
             <h2>yourPlants</h2>
             <p>Enter your infomation or search an already made account</p>
 
-            <form id="searchArea" class="input-group" action="/getUser" method="get">
+            <form id="searchArea" class="input-group" action="/getUser?findUser=" method="get">
                 <input type="text" class="form-control" placeholder="Enter name" id="searchBar">
 
                 <div class="input-group-append">
@@ -157,65 +214,6 @@
                                ?
                         </button>  
                         
-                        <div class="modal fade" id="plantTypes" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Plant Types</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <h3>Low Light</h3>
-                                    <p class="pInfo">Plants that need light just bright enough to read
-                                        a newspaper during daylight hours.
-                                    </p>
-                                    <ul>
-                                        <li>Pothos</li>
-                                        <li>Bamboo</li>
-                                        <li>Philodendron</li>
-                                        <li>Peace Lily</li>
-                                        <li>Snake Plant</li>
-                                    </ul>
-
-                                    <h3>Indirect Light</h3>
-                                    <p class="pInfo">Plants are plants that are within a few feet of a window, 
-                                        but just out of the direct sunlight.</p>
-                                    <ul>
-                                        <li>Money Plant</li>
-                                        <li>Ferns</li>
-                                        <li>Ivy</li>
-                                        <li>Palms</li>
-                                        <li>Monstera</li>
-                                    </ul>
-
-                                    <h3>Low Sunlight</h3>
-                                    <p class="pInfo">Plants that need direct sunlight, but only for 2-4 hours a day.</p>
-                                    <ul>
-                                        <li>Aloe Vera</li>
-                                        <li>Christmas Cactus</li>
-                                        <li>Echeverias</li>
-                                        <li>Spider Plant</li>
-                                        <li>Pigmyweeds</li>
-                                    </ul>
-
-                                    <h3>Succulent</h3>
-                                    <p class="pInfo">Plants that require a half or full day of direct sunlight.</p>
-                                    <ul>
-                                        <li>Hibiscus</li>
-                                        <li>Geranium</li>
-                                        <li>Citrus</li>
-                                        <li>Succulents</li>
-                                        <li>Herbs</li>
-                                    </ul>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <select class="form-control" id="plantType">
                             <option>Low Light</option>
@@ -224,12 +222,112 @@
                             <option>Succulent</option>
                         </select>
                     </div>
+                    <div id="alertArea"></div>
                     <button type="submit" class="btn btn-outline-secondary float-right" id="addUser">Add User</button>
                 </form>
             </div>
 
-          </div>
+            <!-- outside of content -->
 
+            <button type="button" class="btn btn-outline-secondary float-right" data-toggle="modal" id="addPlant" data-target="#newPlant">Add Plant</button>
+            
+            <div class="modal fade" id="newPlant" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New Plant</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="newUser">Plant Name</label>
+                            <input type="text" class="form-control" id="newPlantName" placeholder="plant name">
+                        </div>
+
+                        <label for="newUser">Plant Type</label> 
+                        <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" id="help" data-target="#plantTypes">
+                                ?
+                        </button>  
+                        <select class="form-control" id="newPlantType">
+                            <option>Low Light</option>
+                            <option>Indirect Light</option>
+                            <option>Low Sunlight</option>
+                            <option>Succulent</option>
+                        </select>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="addNewPlant" class="btn btn-secondary" data-dismiss="modal">Add</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="plantTypes" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Plant Types</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h3>Low Light</h3>
+                                <p class="pInfo">Plants that need light just bright enough to read
+                                    a newspaper during daylight hours.
+                                </p>
+                                <ul>
+                                    <li>Pothos</li>
+                                    <li>Bamboo</li>
+                                    <li>Philodendron</li>
+                                    <li>Peace Lily</li>
+                                    <li>Snake Plant</li>
+                                </ul>
+
+                                <h3>Indirect Light</h3>
+                                <p class="pInfo">Plants are plants that are within a few feet of a window, 
+                                    but just out of the direct sunlight.</p>
+                                <ul>
+                                    <li>Money Plant</li>
+                                    <li>Ferns</li>
+                                    <li>Ivy</li>
+                                    <li>Palms</li>
+                                    <li>Monstera</li>
+                                </ul>
+
+                                <h3>Low Sunlight</h3>
+                                <p class="pInfo">Plants that need direct sunlight, but only for 2-4 hours a day.</p>
+                                <ul>
+                                    <li>Aloe Vera</li>
+                                    <li>Christmas Cactus</li>
+                                    <li>Echeverias</li>
+                                    <li>Spider Plant</li>
+                                    <li>Pigmyweeds</li>
+                                </ul>
+
+                                <h3>Succulent</h3>
+                                <p class="pInfo">Plants that require a half or full day of direct sunlight.</p>
+                                <ul>
+                                    <li>Hibiscus</li>
+                                    <li>Geranium</li>
+                                    <li>Citrus</li>
+                                    <li>Succulents</li>
+                                    <li>Herbs</li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+          </div>
         </div>
 
         <footer class="row justify-content-center" >
