@@ -70,33 +70,57 @@ const addUser = (request, response, body) => {
   }
 
   users[body.userName].userName = body.userName;
-  users[body.userName].plantName = body.plantName;
-  users[body.userName].plantType = body.plantType;
+  users[body.userName].plantName = [];
+  users[body.userName].plantType = [];
+
+  users[body.userName].plantName.push(body.plantName);
+  users[body.userName].plantType.push(body.plantType);
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
-    console.log(users[body.userName]);
     return respond(request, response, responseCode, responseJSON);
   }
 
   return respondEmpty(request, response, responseCode);
 };
 
-// const addPlant = (request, response, body) => {
-//   const responseJSON = {
-//     message: 'Please enter the required information',
-//   };
+const addPlant = (request, response, body) => {
+  const responseJSON = {
+    message: 'Please enter the required information',
+  };
 
-//   if (!body.newPlantName || !body.newPlantType) {
-//     responseJSON.id = 'missingParameters';
-//     return respond(request, response, 400, responseJSON);
-//   }
+  if (!body.newPlantName || !body.newPlantType) {
+    responseJSON.id = 'missingParameters';
+    return respond(request, response, 400, responseJSON);
+  }
 
-//   //add new plants to user name currently in use
-// };
+  let responseCode = 204;
+
+  if (users[body.userName]) {
+    users[body.userName].plantName.push(body.newPlantName);
+    users[body.userName].plantType.push(body.newPlantType);
+
+    responseJSON.message = 'Plant added';
+  } else {
+    users[body.userName] = {};
+    
+    users[body.userName].userName = body.userName;
+    users[body.userName].plantName = [];
+    users[body.userName].plantType = [];
+
+    users[body.userName].plantName.push(body.newPlantName);
+    users[body.userName].plantType.push(body.newPlantType);
+
+    responseCode = 201;
+    responseJSON.message = 'User created';
+  }
+
+  return respond(request, response, responseCode, responseJSON);
+};
 
 module.exports = {
   getUser,
   addUser,
   notFound,
+  addPlant,
 };

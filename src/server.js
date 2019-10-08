@@ -28,6 +28,26 @@ const handlePost = (request, response, parsedUrl) => {
 
       json.addUser(request, res, bodyParams);
     });
+  } else if (parsedUrl.pathname === '/addPlant') {
+    const res = response;
+    const body = [];
+
+    request.on('error', (err) => {
+      console.dir(err);
+      res.statusCode = 400;
+      res.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString);
+
+      json.addPlant(request, res, bodyParams);
+    });
   }
 };
 

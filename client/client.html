@@ -74,10 +74,6 @@
           const obj = JSON.parse(xhr.response);
           console.dir(obj.status);
 
-          if(obj.message !== undefined) {
-            console.dir(obj.message);
-          }
-          
           if(obj.user) {
             console.dir(obj);
 
@@ -87,21 +83,30 @@
 
             const person = document.createElement('div');
             const name = document.createElement('h3');
-            const plants = document.createElement('ul');
-            const plant = document.createElement('li');
-            const newPlant = document.createElement('button');
 
-            document.querySelector('#addPlant').style.visibility = "visible"
+            const plants = document.createElement('ul');
+            const alerts = document.createElement('div');
+
+            const refresh = document.createElement('button');
+
+            document.querySelector('#addPlant').style.visibility = "visible";
+            document.querySelector('#refresh').style.visibility = "visible";
 
             name.id = 'usersName';
             name.innerHTML = obj.user.userName;
 
+            alerts.id = 'alertArea';
             plants.id = 'plantList';
-            plant.innerHTML = `${obj.user.plantName} : ${obj.user.plantType}`;
 
-            plants.appendChild(plant);
+            for(let i = 0; i < obj.user.plantName.length; i = i + 1) {
+                const plant = document.createElement('li');
+                plant.innerHTML = `${obj.user.plantName[i]} : ${obj.user.plantType[i]}`;
+                plants.appendChild(plant);
+            }
+
             person.appendChild(name);
             person.appendChild(plants);
+            person.appendChild(alerts);
 
             content.appendChild(person);
           } 
@@ -146,17 +151,49 @@
         e.preventDefault();
         return false;
       };
+
+      const sendPlant = (e, form) => {
+        const plantN = form.querySelector('#newPlantName');
+        const plantT = form.querySelector('#newPlantType');
+        const search = document.querySelector('#searchBar').value;
+
+        const currentUser = document.querySelector('#usersName');
+        console.log(currentUser);
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/addPlant');
+        
+    
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader ('Accept', 'application/json');
+        xhr.onload = () => handleResponse(xhr, false);
+        
+        console.log(search);
+        const formData = `userName=${search}&newPlantName=${plantN.value}&newPlantType=${plantT.value}`;
+        console.log(formData);
+        
+        xhr.send(formData);
+        e.preventDefault();
+        return false;
+      };
       
       const init = () => {
 
         const userForm = document.querySelector('#newUser');
         const findUser = document.querySelector('#searchArea');
 
+        const plantForm = document.querySelector('#plantForm');
+        const refreshUser = document.querySelector('#refresh');
+
         const getUser = (e) => requestUpdate(e, findUser);
         const addUser = (e) => sendPost(e, userForm);
-  
+        const addPlant = (e) => sendPlant(e, plantForm);
+
         findUser.addEventListener('submit', getUser);
         newUser.addEventListener('submit', addUser);
+
+        plantForm.addEventListener('submit', addPlant);
+        refreshUser.addEventListener('submit', getUser);
   
       };
 
@@ -229,41 +266,44 @@
 
             <!-- outside of content -->
 
+            <form id="refresh" action="/getUser?findUser=" method="get">
+                <button type="submit" id="refreshBtn" class="btn btn-outline-secondary float-right">↻</button>
+            </form>
             <button type="button" class="btn btn-outline-secondary float-right" data-toggle="modal" id="addPlant" data-target="#newPlant">Add Plant</button>
             
             <div class="modal fade" id="newPlant" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">New Plant</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
 
-                        <div class="form-group">
-                            <label for="newUser">Plant Name</label>
-                            <input type="text" class="form-control" id="newPlantName" placeholder="plant name">
-                        </div>
+                    <form class="modal-content" id="plantForm" action="/addPlant" method="post">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">New Plant</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="newUser">Plant Name</label>
+                                        <input type="text" class="form-control" id="newPlantName" placeholder="plant name">
+                                    </div>
 
-                        <label for="newUser">Plant Type</label> 
-                        <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" id="help" data-target="#plantTypes">
-                                ?
-                        </button>  
-                        <select class="form-control" id="newPlantType">
-                            <option>Low Light</option>
-                            <option>Indirect Light</option>
-                            <option>Low Sunlight</option>
-                            <option>Succulent</option>
-                        </select>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" id="addNewPlant" class="btn btn-secondary" data-dismiss="modal">Add</button>
-                    </div>
-                    </div>
+                                    <label for="newUser">Plant Type</label> 
+                                    <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" id="help" data-target="#plantTypes">
+                                            ?
+                                    </button>  
+                                    <select class="form-control" id="newPlantType">
+                                        <option>Low Light</option>
+                                        <option>Indirect Light</option>
+                                        <option>Low Sunlight</option>
+                                        <option>Succulent</option>
+                                    </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" id="addNewPlant" class="btn btn-secondary">Add</button>
+                            </div>
+                    </form>
+                    
                 </div>
             </div>
 

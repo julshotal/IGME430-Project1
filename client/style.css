@@ -67,8 +67,8 @@ strong {
     font-weight: bold;
 
     margin: 10px 5px 10px 5px;
-    color: #F2F2F2;
-    border: 2px solid #F2F2F2;
+    color: #798C65;
+    border: 2px solid #798C65;
 
     transition: all .5s;
 }
@@ -102,14 +102,24 @@ strong {
     border-radius: 15px;
 }
 
-#search, #addUser, #addPlant {
+#search, #addUser, #addPlant, #refreshBtn {
     font-family: 'DM Serif Text', serif;
     color: #F2F2F2;
     background-color: #798C65;
 }
 
+#refresh {
+    visibility: hidden;
+}
+
+#refreshBtn {
+    margin: 0px 5px 0px 5px;
+}
+
+
 #addPlant {
     visibility: hidden;
+    margin-right: 5px;
 }
 
 #plantList {
