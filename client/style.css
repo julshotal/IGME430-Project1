@@ -39,19 +39,19 @@ ul {
 }
 
 footer {
-    background-color: #DADADA;
     position: fixed;
     left: 0;
     bottom: 0;
+    padding-left: 20px;
     width: 100%;
 }
 
 label {
     color: #597322;
     font-family: 'DM Serif Text', serif;
-    font-size: 20px;
+    font-size: 18px;
 
-    margin: 10px 5px 10px 5px;
+    margin: 5px 5px 5px 5px;
 }
 
 strong {
@@ -85,7 +85,7 @@ strong {
 
 #foot {
     font-family: 'DM Serif Text', serif;
-    text-align: center;
+    text-align: left;
     color: #597322;
     margin: 10px 10px 10px 10px;
 }
@@ -135,4 +135,8 @@ strong {
     margin-bottom: 25px;
     border-bottom: 3px inset #798C65;
 }
+
+
+
+
 

@@ -4,6 +4,7 @@ const query = require('querystring');
 
 const html = require('./htmlResponses.js');
 const json = require('./responses.js');
+const media = require('./mediaResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -54,6 +55,11 @@ const handlePost = (request, response, parsedUrl) => {
 const urlStruct = {
   GET: {
     '/': html.getIndex,
+    '/plant1': media.getPlant1,
+    '/plant2': media.getPlant2,
+    '/plant3': media.getPlant3,
+    '/plant4': media.getplant4,
+    '/none': media.getPlaceholder,
     '/style.css': html.getCSS,
     '/getUser': json.getUser,
     notFound: json.notFound,

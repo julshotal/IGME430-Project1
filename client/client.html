@@ -81,6 +81,9 @@
                 content.innerHTML = '';
             }
 
+            const waterInfo = document.querySelector('#waterInfo');
+            waterInfo.innerHTML = obj.user.water[0];
+
             const person = document.createElement('div');
             const name = document.createElement('h3');
 
@@ -136,6 +139,7 @@
         const nameField = userForm.querySelector('#userName');
         const plantField = userForm.querySelector('#plantName');
         const plantTypeField = userForm.querySelector('#plantType');
+        const water = userForm.querySelector('#lastWatered');
         
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/addUser');
@@ -145,7 +149,7 @@
         xhr.setRequestHeader ('Accept', 'application/json');
         xhr.onload = () => handleResponse(xhr, false);
         
-        const formData = `userName=${nameField.value}&plantName=${plantField.value}&plantType=${plantTypeField.value}`;
+        const formData = `userName=${nameField.value}&plantName=${plantField.value}&plantType=${plantTypeField.value}&watered=${water.value}`;
         
         xhr.send(formData);
         e.preventDefault();
@@ -155,6 +159,7 @@
       const sendPlant = (e, form) => {
         const plantN = form.querySelector('#newPlantName');
         const plantT = form.querySelector('#newPlantType');
+        const plantW = form.querySelector('#newWatered');
         const search = document.querySelector('#searchBar').value;
 
         const currentUser = document.querySelector('#usersName');
@@ -169,7 +174,7 @@
         xhr.onload = () => handleResponse(xhr, false);
         
         console.log(search);
-        const formData = `userName=${search}&newPlantName=${plantN.value}&newPlantType=${plantT.value}`;
+        const formData = `userName=${search}&newPlantName=${plantN.value}&newPlantType=${plantT.value}&newWatered=${newWatered.value}`;
         console.log(formData);
         
         xhr.send(formData);
@@ -259,6 +264,12 @@
                             <option>Succulent</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="newUser">Last Watered</label>
+                        <input class="form-control" type="date" id="lastWatered">        
+                    </div>
+
                     <div id="alertArea"></div>
                     <button type="submit" class="btn btn-outline-secondary float-right" id="addUser">Add User</button>
                 </form>
@@ -297,6 +308,11 @@
                                         <option>Low Sunlight</option>
                                         <option>Succulent</option>
                                     </select>
+
+                                    <div class="form-group">
+                                        <label for="newUser">Last Watered</label>
+                                        <input class="form-control" type="date" id="newWatered">        
+                                    </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

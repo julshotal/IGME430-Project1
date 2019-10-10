@@ -1,5 +1,14 @@
 const users = {};
 
+const succWater = 15;
+const lowSunWater = 10;
+const lowLightWater = 8;
+const indirectWater = 4;
+
+const d = new Date();
+const todaysDate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+console.log(todaysDate);
+
 const respond = (request, response, status, user) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -17,6 +26,59 @@ const respondEmpty = (request, response, status) => {
 
   response.writeHead(status, headers);
   response.end();
+};
+
+const calculateDays = (waterDate, currentDate, plantName) => {
+  const currentDay = currentDate[2];
+  const waterDay = waterDate[2];
+
+  let daysTilWater = 0;
+
+  let waterWarning = `${plantName} needs water in`;
+
+  if (currentDay - waterDay < 0) {
+    daysTilWater = currentDay - waterDay;
+    waterWarning = `${waterWarning} <strong>${Math.abs(daysTilWater)}</strong> day(s)`;
+  } else if (currentDay - waterDay > 0) {
+    daysTilWater = currentDay - waterDay;
+    waterWarning = `${plantName} needed water <strong>${daysTilWater}</strong> day(s) ago`;
+  }
+
+  return waterWarning;
+};
+
+const calculateDate = (waterDate, plantKind, plantName) => {
+  const waterDay = waterDate.split('-');
+  const currentDate = todaysDate.split('-');
+
+  console.log(waterDate);
+
+  const wD = new Date(waterDate);
+  const daysInMonth = new Date(wD.getFullYear, wD.getMonth + 1, 0);
+
+  if (plantKind === 'Low Light') {
+    waterDay[2] += lowLightWater;
+  } else if (plantKind === 'Indirect Light') {
+    waterDay[2] += indirectWater;
+  } else if (plantKind === 'Low Sunlight') {
+    waterDay[2] += lowSunWater;
+  } else {
+    waterDay[2] += succWater;
+  }
+
+  console.log(wD);
+
+  if (waterDay[2] > daysInMonth.getDate()) {
+    console.log(daysInMonth.getDate());
+    waterDay[1] += 1;
+    waterDay[2] -= daysInMonth.getDate();
+
+    if (waterDay[1] > 12) {
+      waterDay[1] = 1;
+    }
+  }
+
+  return calculateDays(waterDay, currentDate, plantName);
 };
 
 // GET USER
@@ -56,7 +118,7 @@ const addUser = (request, response, body) => {
     message: 'Please enter the required information',
   };
 
-  if (!body.userName || !body.plantName || !body.plantType) {
+  if (!body.userName || !body.plantName || !body.plantType || !body.watered) {
     responseJSON.id = 'missingParameters';
     return respond(request, response, 400, responseJSON);
   }
@@ -72,9 +134,11 @@ const addUser = (request, response, body) => {
   users[body.userName].userName = body.userName;
   users[body.userName].plantName = [];
   users[body.userName].plantType = [];
+  users[body.userName].water = [];
 
   users[body.userName].plantName.push(body.plantName);
   users[body.userName].plantType.push(body.plantType);
+  users[body.userName].water.push(calculateDate(body.watered, body.plantType, body.plantName));
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -89,7 +153,7 @@ const addPlant = (request, response, body) => {
     message: 'Please enter the required information',
   };
 
-  if (!body.newPlantName || !body.newPlantType) {
+  if (!body.newPlantName || !body.newPlantType || !body.newWatered) {
     responseJSON.id = 'missingParameters';
     return respond(request, response, 400, responseJSON);
   }
@@ -100,16 +164,23 @@ const addPlant = (request, response, body) => {
     users[body.userName].plantName.push(body.newPlantName);
     users[body.userName].plantType.push(body.newPlantType);
 
+    const waterTxt = calculateDate(body.newWatered, body.newPlantType, body.newPlantName);
+    users[body.userName].water.push(waterTxt);
+
     responseJSON.message = 'Plant added';
   } else {
     users[body.userName] = {};
-    
+
     users[body.userName].userName = body.userName;
     users[body.userName].plantName = [];
     users[body.userName].plantType = [];
+    users[body.userName].water = [];
 
     users[body.userName].plantName.push(body.newPlantName);
     users[body.userName].plantType.push(body.newPlantType);
+
+    const waterTxt = calculateDate(body.newWatered, body.newPlantType, body.newPlantName);
+    users[body.userName].water.push(waterTxt);
 
     responseCode = 201;
     responseJSON.message = 'User created';
