@@ -36,7 +36,9 @@ const calculateDays = (waterDate, currentDate, plantName, dateObj) => {
 
   let waterWarning = `${plantName} needs water in`;
 
-  if(dateObj < todaysDate) {
+  console.log(dateObj);
+
+  if(dateObj.getTime() < d.getTime()) {
     if (currentDay - waterDay < 0) {
       daysTilWater = currentDay - waterDay;
       waterWarning = `${waterWarning} <strong>${Math.abs(daysTilWater)}</strong> day(s)`;
@@ -141,7 +143,9 @@ const addUser = (request, response, body) => {
 
   users[body.userName].plantName.push(body.plantName);
   users[body.userName].plantType.push(body.plantType);
-  users[body.userName].water.push(calculateDate(body.watered, body.plantType, body.plantName));
+  console.log(body.watered);
+  const waterTxt = calculateDate(body.watered, body.plantType, body.plantName);
+  users[body.userName].water.push(waterTxt);
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
