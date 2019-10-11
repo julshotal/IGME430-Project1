@@ -28,7 +28,7 @@ const respondEmpty = (request, response, status) => {
   response.end();
 };
 
-const calculateDays = (waterDate, currentDate, plantName) => {
+const calculateDays = (waterDate, currentDate, plantName, dateObj) => {
   const currentDay = currentDate[2];
   const waterDay = waterDate[2];
 
@@ -36,49 +36,52 @@ const calculateDays = (waterDate, currentDate, plantName) => {
 
   let waterWarning = `${plantName} needs water in`;
 
-  if (currentDay - waterDay < 0) {
-    daysTilWater = currentDay - waterDay;
-    waterWarning = `${waterWarning} <strong>${Math.abs(daysTilWater)}</strong> day(s)`;
-  } else if (currentDay - waterDay > 0) {
-    daysTilWater = currentDay - waterDay;
-    waterWarning = `${plantName} needed water <strong>${daysTilWater}</strong> day(s) ago`;
+  if(dateObj < todaysDate) {
+    if (currentDay - waterDay < 0) {
+      daysTilWater = currentDay - waterDay;
+      waterWarning = `${waterWarning} <strong>${Math.abs(daysTilWater)}</strong> day(s)`;
+    } else {
+      daysTilWater = currentDay - waterDay;
+      waterWarning = `${plantName} needed water <strong>${daysTilWater}</strong> day(s) ago`;
+    }
+  } else {
+    waterWarning = 'You can not water plants in the future';
   }
 
   return waterWarning;
+
 };
 
 const calculateDate = (waterDate, plantKind, plantName) => {
   const waterDay = waterDate.split('-');
   const currentDate = todaysDate.split('-');
 
-  console.log(waterDate);
-
   const wD = new Date(waterDate);
-  const daysInMonth = new Date(wD.getFullYear, wD.getMonth + 1, 0);
+  const daysInMonth = new Date(wD.getFullYear(), wD.getMonth() + 1, 0);
 
   if (plantKind === 'Low Light') {
-    waterDay[2] += lowLightWater;
+    waterDay[2] = parseInt(waterDay[2], 10) + lowLightWater;
   } else if (plantKind === 'Indirect Light') {
-    waterDay[2] += indirectWater;
+    waterDay[2] = parseInt(waterDay[2], 10) + indirectWater;
   } else if (plantKind === 'Low Sunlight') {
-    waterDay[2] += lowSunWater;
+    waterDay[2] = parseInt(waterDay[2], 10) + lowSunWater;
   } else {
-    waterDay[2] += succWater;
+    waterDay[2] = parseInt(waterDay[2], 10) + succWater;
   }
-
-  console.log(wD);
 
   if (waterDay[2] > daysInMonth.getDate()) {
     console.log(daysInMonth.getDate());
+    console.log(waterDay[2]);
     waterDay[1] += 1;
     waterDay[2] -= daysInMonth.getDate();
+    console.log(waterDay[2])
 
     if (waterDay[1] > 12) {
       waterDay[1] = 1;
     }
   }
 
-  return calculateDays(waterDay, currentDate, plantName);
+  return calculateDays(waterDay, currentDate, plantName, wD);
 };
 
 // GET USER
