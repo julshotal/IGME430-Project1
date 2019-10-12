@@ -58,7 +58,7 @@ const urlStruct = {
     '/plant1': media.getPlant1,
     '/plant2': media.getPlant2,
     '/plant3': media.getPlant3,
-    '/plant4': media.getplant4,
+    '/plant4': media.getPlant4,
     '/none': media.getPlaceholder,
     '/style.css': html.getCSS,
     '/getUser': json.getUser,

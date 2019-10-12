@@ -33,10 +33,10 @@ p {
 }
 img {
     display: block;
-    max-width: 60%;
+    max-width: 40%;
     height: auto;
     margin: 0 auto;
-    padding: 20px 0px 20px 0px;
+    padding: 10px 0px 5px 0px;
 
     min-width: 400px;
 }
@@ -88,8 +88,11 @@ strong {
     border-color: #798C65;
 }
 
-#waterInfo {
-    font-size: 1.5em; 
+.carousel-caption {
+    position: relative;
+    font-size: 1.5em;
+    left: 0;
+    top: 0;
 }
 
 #foot {
@@ -111,6 +114,7 @@ strong {
 
     max-height: 670px;
     max-width: 600px;
+    overflow-y: auto;
 }
 
 #search, #addUser, #addPlant, #refreshBtn {
@@ -127,6 +131,9 @@ strong {
     margin: 0px 5px 0px 5px;
 }
 
+#newWateredInput {
+    margin: top 20px;
+}
 
 #addPlant {
     visibility: hidden;

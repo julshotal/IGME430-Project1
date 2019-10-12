@@ -38,7 +38,7 @@ const calculateDays = (waterDate, currentDate, plantName, dateObj) => {
 
   console.log(dateObj);
 
-  if(dateObj.getTime() < d.getTime()) {
+  if (dateObj.getTime() < d.getTime()) {
     if (currentDay - waterDay < 0) {
       daysTilWater = currentDay - waterDay;
       waterWarning = `${waterWarning} <strong>${Math.abs(daysTilWater)}</strong> day(s)`;
@@ -51,7 +51,6 @@ const calculateDays = (waterDate, currentDate, plantName, dateObj) => {
   }
 
   return waterWarning;
-
 };
 
 const calculateDate = (waterDate, plantKind, plantName) => {
@@ -76,7 +75,7 @@ const calculateDate = (waterDate, plantKind, plantName) => {
     console.log(waterDay[2]);
     waterDay[1] += 1;
     waterDay[2] -= daysInMonth.getDate();
-    console.log(waterDay[2])
+    console.log(waterDay[2]);
 
     if (waterDay[1] > 12) {
       waterDay[1] = 1;
@@ -84,6 +83,29 @@ const calculateDate = (waterDate, plantKind, plantName) => {
   }
 
   return calculateDays(waterDay, currentDate, plantName, wD);
+};
+
+const htmlTemplate = (plantKind, textInfo) => {
+  let plantURL = '/none';
+
+  if (plantKind === 'Low Light') {
+    plantURL = '/plant1';
+  } else if (plantKind === 'Indirect Light') {
+    plantURL = '/plant2';
+  } else if (plantKind === 'Low Sunlight') {
+    plantURL = '/plant3';
+  } else {
+    plantURL = '/plant4';
+  }
+
+  const htmlTemp = `<div class="carousel-item">
+  <img src=${plantURL} alt="plant img">
+  <div class="carousel-caption">
+      <p>${textInfo}</p>
+  </div>
+  </div>`;
+
+  return htmlTemp;
 };
 
 // GET USER
@@ -140,12 +162,17 @@ const addUser = (request, response, body) => {
   users[body.userName].plantName = [];
   users[body.userName].plantType = [];
   users[body.userName].water = [];
+  users[body.userName].template = [];
 
   users[body.userName].plantName.push(body.plantName);
   users[body.userName].plantType.push(body.plantType);
-  console.log(body.watered);
+
   const waterTxt = calculateDate(body.watered, body.plantType, body.plantName);
   users[body.userName].water.push(waterTxt);
+
+  console.log(body.plantType);
+  const getTemplate = htmlTemplate(body.plantType, waterTxt);
+  users[body.userName].template.push(getTemplate);
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -174,7 +201,10 @@ const addPlant = (request, response, body) => {
     const waterTxt = calculateDate(body.newWatered, body.newPlantType, body.newPlantName);
     users[body.userName].water.push(waterTxt);
 
-    responseJSON.message = 'Plant added';
+    const getTemplate = htmlTemplate(body.newPlantType, waterTxt);
+    users[body.userName].template.push(getTemplate);
+
+
   } else {
     users[body.userName] = {};
 
@@ -188,6 +218,9 @@ const addPlant = (request, response, body) => {
 
     const waterTxt = calculateDate(body.newWatered, body.newPlantType, body.newPlantName);
     users[body.userName].water.push(waterTxt);
+
+    const getTemplate = htmlTemplate(body.newPlantType, waterTxt);
+    users[body.userName].template.push(getTemplate);
 
     responseCode = 201;
     responseJSON.message = 'User created';

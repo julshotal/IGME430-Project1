@@ -22,7 +22,7 @@
     <script type="text/babel">
     const handleResponse = (xhr, parseResponse) => {
         const content = document.querySelector('#content');
-        const alertArea = document.querySelector('#alertArea');
+        const alertArea = document.querySelector('.alertArea');
   
         switch(xhr.status) {
           case 200:
@@ -81,9 +81,6 @@
                 content.innerHTML = '';
             }
 
-            const waterInfo = document.querySelector('#waterInfo');
-            waterInfo.innerHTML = obj.user.water[0];
-
             const person = document.createElement('div');
             const name = document.createElement('h3');
 
@@ -92,8 +89,14 @@
 
             const refresh = document.createElement('button');
 
+            const spinner = document.querySelector('#plantSpin');
+
             document.querySelector('#addPlant').style.visibility = "visible";
             document.querySelector('#refresh').style.visibility = "visible";
+
+            if(spinner.hasChildNodes()){
+                spinner.innerHTML = '';
+            }
 
             name.id = 'usersName';
             name.innerHTML = obj.user.userName;
@@ -105,11 +108,17 @@
                 const plant = document.createElement('li');
                 plant.innerHTML = `${obj.user.plantName[i]} : ${obj.user.plantType[i]}`;
                 plants.appendChild(plant);
+
+                //https://davidwalsh.name/convert-html-stings-dom-nodes
+                let waterInfo = document.createRange().createContextualFragment(obj.user.template[i]);
+                spinner.appendChild(waterInfo);
             }
 
             person.appendChild(name);
             person.appendChild(plants);
             person.appendChild(alerts);
+
+            spinner.childNodes[0].className =  "carousel-item active"
 
             content.appendChild(person);
           } 
@@ -222,8 +231,19 @@
                 <h1>plantBar.</h1>
             </header>
             
-           <img src="/none">
-            <p id="waterInfo">Enter your information or search a user to begin</p>
+
+            <div id="plantDisplay" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" id="plantSpin">
+
+                    <div class="item active">
+                        <img src="/none" alt="placeholder plant img">
+                        <div class="carousel-caption">
+                            <p>Enter your information or search a user to begin</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
           </div>
 
           <div class="col-sm justify-content-left" id="infoArea">
@@ -270,7 +290,7 @@
                         <input class="form-control" type="date" id="lastWatered">        
                     </div>
 
-                    <div id="alertArea"></div>
+                    <div class="alertArea"></div>
                     <button type="submit" class="btn btn-outline-secondary float-right" id="addUser">Add User</button>
                 </form>
             </div>
@@ -309,12 +329,13 @@
                                         <option>Succulent</option>
                                     </select>
 
-                                    <div class="form-group">
+                                    <div class="form-group" id="newWateredInput">
                                         <label for="newUser">Last Watered</label>
                                         <input class="form-control" type="date" id="newWatered">        
                                     </div>
                             </div>
                             <div class="modal-footer">
+                                <div class="alertArea" class='float-left'></div>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="submit" id="addNewPlant" class="btn btn-secondary">Add</button>
                             </div>

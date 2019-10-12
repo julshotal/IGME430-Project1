@@ -3,7 +3,7 @@ const fs = require('fs');
 const lowLight = fs.readFileSync(`${__dirname}/../assets/lowLight.png`);
 const indirectLight = fs.readFileSync(`${__dirname}/../assets/indirectLight.png`);
 const lowSunlight = fs.readFileSync(`${__dirname}/../assets/lowSunlight.png`);
-const succulent = fs.readFileSync(`${__dirname}/../assets/succ.png`);
+const succ = fs.readFileSync(`${__dirname}/../assets/succ.png`);
 const none = fs.readFileSync(`${__dirname}/../assets/none.png`);
 
 const loadPLant = (type, request, response) => {
@@ -25,7 +25,7 @@ const getPlant3 = (request, response) => {
 };
 
 const getPlant4 = (request, response) => {
-  loadPLant(succulent, request, response);
+  loadPLant(succ, request, response);
 };
 
 const getPlaceholder = (request, response) => {
