@@ -57,7 +57,7 @@ const calculateDays = (waterDate, currentDate, plantName, dateObj) => {
       waterWarning = `${plantName} needed water <strong>${daysTilWater}</strong> day(s) ago`;
     }
   } else {
-    waterWarning = 'You can not water plants in the future';
+    waterWarning = 'Date entered is in the future';
   }
 
   return waterWarning;
@@ -183,10 +183,26 @@ const notFound = (request, response) => {
   return respond(request, response, 404, responseJSON);
 };
 
-
 // HEAD NOT FOUND
 // Passes back a 404 not found status code
 const headNotFound = (request, response) => respondEmpty(request, response, 404);
+
+// USER CREATION
+// Handles the repeated intialization of arrays and pushing in info
+const userCreation = (name, pName, pType, water) => {
+  users[name].userName = name;
+  users[name].plantName = [];
+  users[name].plantType = [];
+  users[name].template = [];
+
+  users[name].plantName.push(pName);
+  users[name].plantType.push(pType);
+
+  // generate HTML template for that specific plant
+  const waterTxt = calculateDate(water, pType, pName);
+  const getTemplate = htmlTemplate(pType, waterTxt);
+  users[name].template.push(getTemplate);
+};
 
 // ADD USER
 /* Check if any parameters are missing from the form, if they are send back a bad request
@@ -210,18 +226,8 @@ const addUser = (request, response, body) => {
   }
 
   // initialize arrays for the new user under their name
-  users[body.userName].userName = body.userName;
-  users[body.userName].plantName = [];
-  users[body.userName].plantType = [];
-  users[body.userName].template = [];
+  userCreation(body.userName, body.plantName, body.plantType, body.watered);
 
-  users[body.userName].plantName.push(body.plantName);
-  users[body.userName].plantType.push(body.plantType);
-
-  // generate HTML template for that specific plant
-  const waterTxt = calculateDate(body.watered, body.plantType, body.plantName);
-  const getTemplate = htmlTemplate(body.plantType, waterTxt);
-  users[body.userName].template.push(getTemplate);
 
   if (responseCode === 201) {
     return respondEmpty(request, response, responseCode);
@@ -261,19 +267,8 @@ const addPlant = (request, response, body) => {
     // create new user
     users[body.userName] = {};
 
-    // initialize arrays for the new user under their name
-    users[body.userName].userName = body.userName;
-    users[body.userName].plantName = [];
-    users[body.userName].plantType = [];
-    users[body.userName].template = [];
-
-    users[body.userName].plantName.push(body.newPlantName);
-    users[body.userName].plantType.push(body.newPlantType);
-
-    // generate HTML template for that specific plant
-    const waterTxt = calculateDate(body.newWatered, body.newPlantType, body.newPlantName);
-    const getTemplate = htmlTemplate(body.newPlantType, waterTxt);
-    users[body.userName].template.push(getTemplate);
+    // initialize information for new user
+    userCreation(body.userName, body.newPlantName, body.newPlantType, body.newWatered);
 
     responseCode = 201;
   }
