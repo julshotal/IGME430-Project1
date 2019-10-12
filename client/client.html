@@ -20,10 +20,17 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script type="text/babel">
+
+    //HANDLE RESPONSE
+    /* Handles the returned status codes and returned user information */
     const handleResponse = (xhr, parseResponse) => {
+        // Grab content and alert areas
         const content = document.querySelector('#content');
         const alertArea = document.querySelector('.alertArea');
   
+        /* For each status code other than 200 check for existing information, which is
+        then wiped. Then, create an alert of the appropiate type with the corresponding
+        message */
         switch(xhr.status) {
           case 200:
             console.log('User retrieved successfully');
@@ -69,18 +76,23 @@
             }
             break;
         }
-        
+
         if(parseResponse) {
+
+          //Parse the response into an object
           const obj = JSON.parse(xhr.response);
           console.dir(obj.status);
 
+          // If said object is a user (it should be)...
           if(obj.user) {
             console.dir(obj);
 
+            //Remove all content within the content div
             if(content.hasChildNodes()){
                 content.innerHTML = '';
             }
 
+            //Create a new div, h3, ul, div, and button
             const person = document.createElement('div');
             const name = document.createElement('h3');
 
@@ -89,21 +101,27 @@
 
             const refresh = document.createElement('button');
 
+            // Grab the div containing the carousel
             const spinner = document.querySelector('#plantSpin');
 
+            // Make the addPlant and refresh buttons and functionality available
             document.querySelector('#addPlant').style.visibility = "visible";
             document.querySelector('#refresh').style.visibility = "visible";
 
+            // Remove all current content from the carousel 
             if(spinner.hasChildNodes()){
                 spinner.innerHTML = '';
             }
 
+            //set the ID's and innerHTML of the new html elements
             name.id = 'usersName';
             name.innerHTML = obj.user.userName;
 
             alerts.id = 'alertArea';
             plants.id = 'plantList';
 
+            /* For each plant a user has, add it to the list that will append to content 
+               and each plant's custom generated HTML template to the carousel */
             for(let i = 0; i < obj.user.plantName.length; i = i + 1) {
                 const plant = document.createElement('li');
                 plant.innerHTML = `${obj.user.plantName[i]} : ${obj.user.plantType[i]}`;
@@ -114,17 +132,27 @@
                 spinner.appendChild(waterInfo);
             }
 
+            // Append our created HTML elements to the parent div
             person.appendChild(name);
             person.appendChild(plants);
             person.appendChild(alerts);
 
+
+            // Set the first carousel item to active so it shows up
             spinner.childNodes[0].className =  "carousel-item active"
 
+            //Append the person div to the content area
             content.appendChild(person);
           } 
         }
       };
     
+      // REQUEST UPDATE
+      /* Send a XMLHttpRequest using the designated action and method 
+         of the passed in form, as well as the search query
+         
+         Handle get responses with parseResponse as true, otherwise
+         it is false */
       const requestUpdate = (e, userForm) => {
         const url = userForm.action;
         const method = userForm.method;
@@ -144,6 +172,11 @@
         return false;
       };
   
+      // SEND POST
+      /* Gather the information from the provided form's fields and
+         use a POST request to send the information addUser()
+         
+         Prevent default stops another page from loading */
       const sendPost = (e, userForm) => {
         const nameField = userForm.querySelector('#userName');
         const plantField = userForm.querySelector('#plantName');
@@ -165,14 +198,18 @@
         return false;
       };
 
+       // SEND PLANT
+      /* Gather the information from the provided form's fields and
+         use a POST request to send the information addPlant()
+         
+         Prevent default stops another page from loading */
       const sendPlant = (e, form) => {
         const plantN = form.querySelector('#newPlantName');
         const plantT = form.querySelector('#newPlantType');
         const plantW = form.querySelector('#newWatered');
-        const search = document.querySelector('#searchBar').value;
 
-        const currentUser = document.querySelector('#usersName');
-        console.log(currentUser);
+        // Grab the value in the search bar to determine who the currently loaded user is
+        const search = document.querySelector('#searchBar').value;
         
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/addPlant');
@@ -182,15 +219,18 @@
         xhr.setRequestHeader ('Accept', 'application/json');
         xhr.onload = () => handleResponse(xhr, false);
         
-        console.log(search);
         const formData = `userName=${search}&newPlantName=${plantN.value}&newPlantType=${plantT.value}&newWatered=${newWatered.value}`;
-        console.log(formData);
         
         xhr.send(formData);
         e.preventDefault();
         return false;
       };
       
+      // INIT
+      /* Run on window load, grab all forms and hook up events to their submit buttons 
+         to call the desired GET or POST requests
+
+         The refresh button calls getUser() again to refresh the user information displayed*/
       const init = () => {
 
         const userForm = document.querySelector('#newUser');
@@ -211,6 +251,8 @@
   
       };
 
+      // CREATE ALERT
+      // Utility function to create a bootstrap alert, used for status codes
       const createAlert = (message, type) => {
         let alert = document.createElement('div');
         alert.className = `alert alert-${type} float-left`;
@@ -219,6 +261,7 @@
         return alert;
       }
   
+      // Call init on window load
       window.onload = init;
   
     </script>
@@ -227,11 +270,13 @@
     <div class="container-fluid">
         <div class="row" id="mainArea">  
           <div class="col-sm" id="pic">
+
+            <!-- TITLE -->
             <header class="row">
                 <h1>plantBar.</h1>
             </header>
             
-
+            <!-- LEFT SIDE CAROUSEL AND CAPTION -->
             <div id="plantDisplay" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner" id="plantSpin">
 
@@ -246,10 +291,12 @@
             </div>
           </div>
 
+          <!-- RIGHT SIDE BOX CONTENT -->
           <div class="col-sm justify-content-left" id="infoArea">
             <h2>yourPlants</h2>
             <p>Enter your infomation or search an already made account</p>
 
+            <!-- SEARCH BAR -->
             <form id="searchArea" class="input-group" action="/getUser?findUser=" method="get">
                 <input type="text" class="form-control" placeholder="Enter name" id="searchBar">
 
@@ -258,6 +305,7 @@
                 </div>
               </form>
 
+            <!-- CONTENT AREA - Changes from new user form to display existing user data-->
             <div id="content">
                 <form id="newUser" action="/addUser" method="post">
                     <div class="form-group">
@@ -297,11 +345,13 @@
 
             <!-- outside of content -->
 
+            <!-- HIDDEN REFRESH AND ADD PLANT BUTTONS -->
             <form id="refresh" action="/getUser?findUser=" method="get">
                 <button type="submit" id="refreshBtn" class="btn btn-outline-secondary float-right">↻</button>
             </form>
             <button type="button" class="btn btn-outline-secondary float-right" data-toggle="modal" id="addPlant" data-target="#newPlant">Add Plant</button>
             
+            <!-- ADD PLANT MODAL FORM -->
             <div class="modal fade" id="newPlant" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
 
@@ -344,6 +394,7 @@
                 </div>
             </div>
 
+            <!-- PLANT TYPES INFORMATION MODAL - Called by ? button -->
             <div class="modal fade" id="plantTypes" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -407,6 +458,7 @@
           </div>
         </div>
 
+        <!-- CREATOR CREDIT -->
         <footer class="row justify-content-left" >
             <p id="foot">Julia Hotaling © 2019</p>
         </footer>
